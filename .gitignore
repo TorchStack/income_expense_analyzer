@@ -1,0 +1,8 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+myenv/
+holding/
+
+*.vscode
+*.lock

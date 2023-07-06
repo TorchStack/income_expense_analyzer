@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chart.js Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="myChart"></canvas>
+
+    <script>
+        // Retrieve the data passed from Flask
+        var data = {{ data | tojson | safe }};
+        console.log(data);
+
+        // Extract the labels and datasets from the data
+        var labels = data[0].slice(1);
+        console.log(labels);
+
+        var months = data.slice(1).map(function(item) {
+            return item[0];
+        });
+
+        var secondItems = data.slice(1).map(function(item) {
+            return item[1];
+        });
+        console.log(secondItems);
+
+        var thirdItems = data.slice(1).map(function(item) {
+            return item[2];
+        });
+
+        var datasets = data.slice(1).map(function(row) {
+            var dataPoints = row.slice(1).map(function(value, index) {
+                return { x: labels[index], y: value };
+            });
+            console.log(dataPoints);
+
+            return {
+                label: "Income",
+                data: secondItems,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                borderWidth: 1,
+                yAxisID: 'y',
+            };
+        });
+        console.log("dataset", datasets);
+
+        var datasets2 = data.slice(1).map(function(row) {
+            var dataPoints = row.slice(1).map(function(value, index) {
+                return { x: labels[index], y: value };
+            });
+            console.log(dataPoints);
+
+            return {
+                label: "Expenses",
+                data: thirdItems,
+                fill: false,
+                borderColor: randomColor(),
+                borderWidth: 1
+            };
+        });
+
+        var datasetarr1 = Object.values(datasets);
+        console.log('datasetarr1', datasetarr1[0]);
+        var datasetarr2 = Object.values(datasets2);
+        console.log('datasetarr2', datasetarr2[0]);
+        var all_data = [datasetarr1[0], datasetarr2[0]];
+        console.log('all data', all_data);
+
+        // Create the chart
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: all_data
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                mode: 'index',
+                intersect: false,
+                },
+                legend: {
+                    position: 'top'
+                },
+                plugins: {
+                title: {
+                    display: true,
+                    text: 'Income and Expenses by Month'
+                }
+                },
+            }
+        });
+
+        // Generate random color for each dataset
+        function randomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    </script>
+</body>
+</html>
